@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="SimpleBankSystemTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-02-21T15:28:01" hostname="DESKTOP-DD3SLOV" time="0.191">
+  <properties/>
+  <testcase name="start" classname="SimpleBankSystemTest" time="0.191"/>
+  <system-out><![CDATA[?[1;31m
+Start test 1?[0m
+1. Create an account
+2. Log into account
+0. Exit
+> 1
+Your card number:
+4000005526462988
+Your card PIN:
+2635
+1. Create an account
+2. Log into account
+0. Exit
+> 1
+Your card number:
+4000000739259288
+Your card PIN:
+5910
+1. Create an account
+2. Log into account
+0. Exit
+> 0
+Bye!
+?[1;31m
+Start test 2?[0m
+1. Create an account
+2. Log into account
+0. Exit
+> 1
+Your card number:
+4000000647237745
+Your card PIN:
+3671
+1. Create an account
+2. Log into account
+0. Exit
+> 2
+Enter your card number:
+> 4000000647237745
+Enter your PIN:
+> 3671
+You have successfully logged in!
+
+1. Balance
+2. Log out
+0. Exit
+> 2
+You have successfully logged out!
+1. Create an account
+2. Log into account
+0. Exit
+> 0
+Bye!
+?[1;31m
+Start test 3?[0m
+1. Create an account
+2. Log into account
+0. Exit
+> 1
+Your card number:
+4000004240278614
+Your card PIN:
+6418
+1. Create an account
+2. Log into account
+0. Exit
+> 2
+Enter your card number:
+> 4000004240278614
+Enter your PIN:
+> 5305
+Wrong card number or PIN!
+1. Create an account
+2. Log into account
+0. Exit
+> 0
+Bye!
+?[1;31m
+Start test 4?[0m
+1. Create an account
+2. Log into account
+0. Exit
+> 1
+Your card number:
+4000007715933733
+Your card PIN:
+7720
+1. Create an account
+2. Log into account
+0. Exit
+> 2
+Enter your card number:
+> 400000735986342
+Enter your PIN:
+> 7720
+Wrong card number or PIN!
+1. Create an account
+2. Log into account
+0. Exit
+?[1;31m
+Start test 5?[0m
+1. Create an account
+2. Log into account
+0. Exit
+> 1
+Your card number:
+4000000685292479
+Your card PIN:
+8240
+1. Create an account
+2. Log into account
+0. Exit
+> 2
+Enter your card number:
+> 4000000685292479
+Enter your PIN:
+> 8240
+You have successfully logged in!
+
+1. Balance
+2. Log out
+0. Exit
+> 1
+Balance: 0
+1. Create an account
+2. Log into account
+0. Exit
+> 0
+Bye!
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
