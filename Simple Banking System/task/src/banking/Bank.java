@@ -2,10 +2,7 @@ package banking;
 
 import org.sqlite.SQLiteDataSource;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Random;
 
 public class Bank {
@@ -79,7 +76,6 @@ public class Bank {
             String sql = "INSERT INTO card (number, pin) VALUES (" +
                     cardNumber + ", " + pin + ");";
             statement.execute(sql);
-            System.out.println(sql);
         } catch (SQLException e) {
             System.out.println(e);
         }
@@ -92,13 +88,25 @@ public class Bank {
                     " AND pin = " + pin + ";";
             ResultSet resultSet = statement.executeQuery(sql);
             return resultSet.next();
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e);
         }
         return false;
     }
 
-    private int queryBalance(String cardNumber, String pin) {
+    public void addIncome(String cardNumber, int n) {
+        String sql = "UPDATE card SET balance = balance + ? WHERE number = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, n);
+            preparedStatement.setString(2, cardNumber);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public int getBalance(String cardNumber, String pin) {
         try {
             Statement statement = connection.createStatement();
             String sql = "SELECT * FROM card WHERE number = " + cardNumber +
@@ -110,10 +118,29 @@ public class Bank {
             } else {
                 return -1;
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             System.out.println(e);
         }
         return -1;
+    }
+
+    public void transferBalance(String fromNumber, String toNumber, int balance) {
+
+        try {
+            String sql = "UPDATE card SET balance = balance - ? WHERE number = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, balance);
+            preparedStatement.setString(2, fromNumber);
+            preparedStatement.executeUpdate();
+            sql = "UPDATE card SET balance = balance + ? WHERE number = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, balance);
+            preparedStatement.setString(2, toNumber);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+
     }
 
     private String generateCardNumber() {
@@ -140,6 +167,44 @@ public class Bank {
             sum += tmp[i];
         }
         return sum;
+    }
+
+    public boolean isValidCard(String cardNumber) {
+        int csum = getCheckSumWithoutLastNumber(cardNumber);
+        int lastDigit = cardNumber.charAt(cardNumber.length() - 1) - '0';
+        return (csum + lastDigit) % 10 == 0;
+    }
+
+    public boolean isExistCard(String cardNumber) {
+        String sql = "SELECT * FROM card WHERE number = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, cardNumber);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return false;
+    }
+
+    public void deleteAccount(String cardNumber) {
+        String sql = "DELETE FROM card WHERE number = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, cardNumber);
+            preparedStatement.execute();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
+
+    public void closeBank() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
     }
 
     private String generatePIN() {

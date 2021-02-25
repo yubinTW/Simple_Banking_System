@@ -672,6 +672,327 @@ files:
         }
     }
   learner_created: false
+- name: src/banking/Bank.java
+  visible: true
+  text: |
+    package banking;
+
+    import org.sqlite.SQLiteDataSource;
+
+    import java.sql.*;
+    import java.util.Random;
+
+    public class Bank {
+
+        private Connection connection;
+        private Random random;
+
+        public Bank() {
+            random = new Random();
+        }
+
+        public Bank(String dbName) {
+            this();
+            if (dbName == null) {
+                dbName = "db.s3db";
+            }
+            String dbURL = "jdbc:sqlite:" + dbName;
+            SQLiteDataSource dataSource = new SQLiteDataSource();
+            dataSource.setUrl(dbURL);
+            try {
+                connection = dataSource.getConnection();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            if (!checkConnection(connection) || !initDB(connection)) {
+                System.out.println("db error");
+            }
+        }
+
+        private boolean checkConnection(Connection connection) {
+            try {
+                return connection.isValid(3);
+            } catch (SQLException e) {
+                return false;
+            }
+        }
+
+        private boolean initDB(Connection connection) {
+            try {
+                Statement statement = connection.createStatement();
+                statement.execute("CREATE TABLE IF NOT EXISTS card (" +
+                        "id INTEGER, " +
+                        "number TEXT, " +
+                        "pin TEXT, " +
+                        "balance INTEGER DEFAULT 0" +
+                        ")");
+                return true;
+            } catch (SQLException e) {
+                return false;
+            }
+
+        }
+
+
+        public void createAccount() {
+            String cardNumber = generateCardNumber();
+            String pin = generatePIN();
+
+            System.out.println("Your card has been created\n" +
+                    "Your card number:\n" +
+                    cardNumber + "\n" +
+                    "Your card PIN:\n" +
+                    pin);
+
+            saveIntoDB(cardNumber, pin);
+        }
+
+        private void saveIntoDB(String cardNumber, String pin) {
+            try {
+                Statement statement = connection.createStatement();
+                String sql = "INSERT INTO card (number, pin) VALUES (" +
+                        cardNumber + ", " + pin + ");";
+                statement.execute(sql);
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+
+        public boolean loginAccount(String cardNumber, String pin) {
+            try {
+                Statement statement = connection.createStatement();
+                String sql = "SELECT * FROM card WHERE number = " + cardNumber +
+                        " AND pin = " + pin + ";";
+                ResultSet resultSet = statement.executeQuery(sql);
+                return resultSet.next();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            return false;
+        }
+
+        public void addIncome(String cardNumber, int n) {
+            String sql = "UPDATE card SET balance = balance + ? WHERE number = ?";
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, n);
+                preparedStatement.setString(2, cardNumber);
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+
+        public int getBalance(String cardNumber, String pin) {
+            try {
+                Statement statement = connection.createStatement();
+                String sql = "SELECT * FROM card WHERE number = " + cardNumber +
+                        " AND pin = " + pin + ";";
+                ResultSet resultSet = statement.executeQuery(sql);
+                if (resultSet.next()) {
+                    int balance = resultSet.getInt("balance");
+                    return balance;
+                } else {
+                    return -1;
+                }
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            return -1;
+        }
+
+        public void transferBalance(String fromNumber, String toNumber, int balance) {
+
+            try {
+                String sql = "UPDATE card SET balance = balance - ? WHERE number = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, balance);
+                preparedStatement.setString(2, fromNumber);
+                preparedStatement.executeUpdate();
+                sql = "UPDATE card SET balance = balance + ? WHERE number = ?";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, balance);
+                preparedStatement.setString(2, toNumber);
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+
+        }
+
+        private String generateCardNumber() {
+            String ranStr = String.format("400000%05d%04d", random.nextInt(100000), random.nextInt(10000));
+            int sum = getCheckSumWithoutLastNumber(ranStr + "0");
+            int lastNumber = 0;
+            if (sum % 10 != 0) {
+                lastNumber = (sum / 10 + 1) * 10 - sum;
+            }
+            return String.format("%s%01d", ranStr, lastNumber);
+        }
+
+        private int getCheckSumWithoutLastNumber(String num) {
+            int[] tmp = new int[num.length() - 1];
+            int sum = 0;
+            for (int i = 0; i < tmp.length; i++) {
+                tmp[i] = num.charAt(i) - '0';
+                if (i % 2 == 0) {
+                    tmp[i] *= 2;
+                }
+                if (tmp[i] > 9) {
+                    tmp[i] -= 9;
+                }
+                sum += tmp[i];
+            }
+            return sum;
+        }
+
+        public boolean isValidCard(String cardNumber) {
+            int csum = getCheckSumWithoutLastNumber(cardNumber);
+            int lastDigit = cardNumber.charAt(cardNumber.length() - 1) - '0';
+            return (csum + lastDigit) % 10 == 0;
+        }
+
+        public boolean isExistCard(String cardNumber) {
+            String sql = "SELECT * FROM card WHERE number = ?";
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, cardNumber);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                return resultSet.next();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+            return false;
+        }
+
+        public void deleteAccount(String cardNumber) {
+            String sql = "DELETE FROM card WHERE number = ?";
+            try {
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, cardNumber);
+                preparedStatement.execute();
+            } catch (SQLException e) {
+                System.out.println(e);
+            }
+        }
+
+        private String generatePIN() {
+            String pin = String.format("%04d", random.nextInt(10000));
+            return pin;
+        }
+    }
+  learner_created: true
+- name: card.s3db
+  visible: true
+  text: "SQLite format 3\0\x04\0\x01\x01\0@  \0\0\0D\0\0\0\x02\0\0\0\0\0\0\0\0\0\0\
+    \0\x01\0\0\0\x04\0\0\0\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0D\0-�\v\n\0\0\0\x01\x03�\0\x03�\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0e\x01\a\x17\x15\x15\x01�-tablecardcard\x02\
+    CREATE TABLE card (id INTEGER, number TEXT, pin TEXT, balance INTEGER DEFAULT\
+    \ 0)\n\0\0\0\x06\x03^\0\x03�\x03�\x03�\x03�\x03y\x03^\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\x19\x06\x05\0-\x15\b40000048353674469637\x19\x05\x05\0-\x15\
+    \b40000033152859049614\x19\x04\x05\0-\x15\b40000076129148843431\x19\x03\x05\0\
+    -\x15\b40000076610518365888\x19\x02\x05\0-\x15\b40000070400815876686\x19\x01\x05\
+    \0-\x15\b40000064317411893361"
+  learner_created: true
+- name: tempDatabase.s3db
+  visible: true
+  text: "SQLite format 3\0\x04\0\x01\x01\0@  \0\0\0=\0\0\0\x02\0\0\0\0\0\0\0\0\0\0\
+    \0\x01\0\0\0\x04\0\0\0\0\0\0\0\0\0\0\0\x01\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0=\0-�\v\n\0\0\0\x01\x03�\0\x03�\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0e\x01\a\x17\x15\x15\x01�-tablecardcard\x02\
+    CREATE TABLE card (id INTEGER, number TEXT, pin TEXT, balance INTEGER DEFAULT\
+    \ 0)\n\0\0\0\x06\x03^\0\x03�\x03�\x03�\x03�\x03y\x03^\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\
+    \0\0\0\0\0\0\0\0\0\0\x19\x06\x05\0-\x15\b40000097253332181159\x19\x05\x05\0-\x15\
+    \b40000044538762566040\x19\x04\x05\0-\x15\b40000066975717348924\x19\x03\x05\0\
+    -\x15\b40000025765364769079\x19\x02\x05\0-\x15\b40000080080433041068\x19\x01\x05\
+    \0-\x15\b40000088789174478298"
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/93/stages/518/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Thu, 25 Feb 2021 16:58:28 UTC
 record: -1

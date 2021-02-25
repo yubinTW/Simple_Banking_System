@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">13.884s</div>
+<div class="counter">0.576s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">start</td>
-<td class="success">13.884s</td>
+<td class="success">0.576s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -123,60 +123,55 @@ Start test 5?[0m
 &gt; 1
 Your card has been created
 Your card number:
-4000003229489998
+4000004931449155
 Your card PIN:
-7134
-INSERT INTO card (number, pin) VALUES (4000003229489998, 7134);
+4749
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 1
 Your card has been created
 Your card number:
-4000002928136413
+4000003351898842
 Your card PIN:
-9473
-INSERT INTO card (number, pin) VALUES (4000002928136413, 9473);
+9038
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 1
 Your card has been created
 Your card number:
-4000002065723312
+4000002388382093
 Your card PIN:
-7158
-INSERT INTO card (number, pin) VALUES (4000002065723312, 7158);
+2655
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 1
 Your card has been created
 Your card number:
-4000007573431977
+4000000434784650
 Your card PIN:
-5747
-INSERT INTO card (number, pin) VALUES (4000007573431977, 5747);
+4934
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 1
 Your card has been created
 Your card number:
-4000001801131855
+4000008725192392
 Your card PIN:
-8072
-INSERT INTO card (number, pin) VALUES (4000001801131855, 8072);
+1130
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 0
 Bye!
-4000003229489998
-4000002928136413
-4000002065723312
-4000007573431977
-4000001801131855
+4000004931449155
+4000003351898842
+4000002388382093
+4000000434784650
+4000008725192392
 ?[1;31m
 Start test 6?[0m
 1. Create an account
@@ -185,21 +180,23 @@ Start test 6?[0m
 &gt; 1
 Your card has been created
 Your card number:
-4000001501188593
+4000003822587974
 Your card PIN:
-9376
-INSERT INTO card (number, pin) VALUES (4000001501188593, 9376);
+4150
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 2
 Enter your card number:
-&gt; 4000001501188593
+&gt; 4000003822587974
 Enter your PIN:
-&gt; 9376
+&gt; 4150
 You have successfully logged in!
 1. Balance
-2. Log out
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
 0. Exit
 &gt; 0
 Bye!
@@ -211,18 +208,17 @@ Start test 7?[0m
 &gt; 1
 Your card has been created
 Your card number:
-4000002957891086
+4000001471614529
 Your card PIN:
-8943
-java.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+2449
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 2
 Enter your card number:
-&gt; 4000002957891086
+&gt; 4000001471614529
 Enter your PIN:
-&gt; 8296
+&gt; 2793
 Wrong card number or PIN!
 1. Create an account
 2. Log into account
@@ -237,18 +233,17 @@ Start test 8?[0m
 &gt; 1
 Your card has been created
 Your card number:
-4000001160483087
+4000009912876193
 Your card PIN:
-1278
-java.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+5847
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 2
 Enter your card number:
-&gt; 400000151722961
+&gt; 400000545556388
 Enter your PIN:
-&gt; 1278
+&gt; 5847
 Wrong card number or PIN!
 1. Create an account
 2. Log into account
@@ -263,31 +258,228 @@ Start test 9?[0m
 &gt; 1
 Your card has been created
 Your card number:
-4000007119481692
+4000005382516582
 Your card PIN:
-3474
-java.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+6971
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 2
 Enter your card number:
-&gt; 4000007119481692
+&gt; 4000005382516582
 Enter your PIN:
-&gt; 3474
-Wrong card number or PIN!
+&gt; 6971
+You have successfully logged in!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 1
+Balance: 0
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 0
+Bye!
+?[1;31m
+Start test 10?[0m
 1. Create an account
 2. Log into account
 0. Exit
 &gt; 1
 Your card has been created
 Your card number:
-4000007093713748
+4000006278646715
 Your card PIN:
-6925
-java.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+3105
 1. Create an account
 2. Log into account
+0. Exit
+&gt; 2
+Enter your card number:
+&gt; 4000006278646715
+Enter your PIN:
+&gt; 3105
+You have successfully logged in!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 2
+Enter income:
+&gt; 10000
+Income was added!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 0
+Bye!
+1. Create an account
+2. Log into account
+0. Exit
+&gt; 2
+Enter your card number:
+&gt; 4000006278646715
+Enter your PIN:
+&gt; 3105
+You have successfully logged in!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 2
+Enter income:
+&gt; 15000
+Income was added!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 0
+Bye!
+?[1;31m
+Start test 11?[0m
+1. Create an account
+2. Log into account
+0. Exit
+&gt; 1
+Your card has been created
+Your card number:
+4000007506679890
+Your card PIN:
+4790
+1. Create an account
+2. Log into account
+0. Exit
+&gt; 1
+Your card has been created
+Your card number:
+4000003237153495
+Your card PIN:
+3962
+1. Create an account
+2. Log into account
+0. Exit
+&gt; 2
+Enter your card number:
+&gt; 4000003237153495
+Enter your PIN:
+&gt; 3962
+You have successfully logged in!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 3
+Transfer
+Enter card number:
+&gt; 2000007269641764
+Probably you made a mistake in the card number. Please try again!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 3
+Transfer
+Enter card number:
+&gt; 2000007269641768
+Such a card does not exist.
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 3
+Transfer
+Enter card number:
+&gt; 4000007506679890
+Enter how much money you want to transfer:
+&gt; 100000
+Not enough money!
+
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 2
+Enter income:
+&gt; 20000
+Income was added!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 3
+Transfer
+Enter card number:
+&gt; 4000007506679890
+Enter how much money you want to transfer:
+&gt; 10000
+Success!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 0
+Bye!
+?[1;31m
+Start test 12?[0m
+1. Create an account
+2. Log into account
+0. Exit
+&gt; 1
+Your card has been created
+Your card number:
+4000008137561564
+Your card PIN:
+4479
+1. Create an account
+2. Log into account
+0. Exit
+&gt; 2
+Enter your card number:
+&gt; 4000008137561564
+Enter your PIN:
+&gt; 4479
+You have successfully logged in!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
+0. Exit
+&gt; 4
+The account has been closed!
+1. Balance
+2. Add income
+3. Do transfer
+4. Close account
+5. Log out
 0. Exit
 &gt; 0
 Bye!
@@ -302,7 +494,7 @@ Bye!
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 6.6.1</a> at 2021年2月25日 下午10:11:53</p>
+<a href="http://www.gradle.org">Gradle 6.6.1</a> at 2021年2月26日 上午12:58:28</p>
 </div>
 </div>
 </body>
