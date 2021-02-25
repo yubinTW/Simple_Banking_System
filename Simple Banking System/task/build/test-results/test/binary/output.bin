@@ -3,49 +3,10 @@
 1. Create an account
 2. Log into account
 	0. Exit
-> 1
-Your card number:
-4000005526462988
-Your card PIN:
-2635
-1. Create an account
-2. Log into account
-	0. Exit
-> 1
-Your card number:
-4000000739259288
-Your card PIN:
-5910
-1. Create an account
-2. Log into account
-	0. Exit
 > 0
 Bye!
 [1;31m
 Start test 2[0m
-1. Create an account
-2. Log into account
-	0. Exit
-> 1
-Your card number:
-4000000647237745
-Your card PIN:
-3671
-1. Create an account
-2. Log into account
-	0. Exit
-> 2
-Enter your card number:
-> 4000000647237745
-Enter your PIN:
-> 3671
-"You have successfully logged in!
-
-1. Balance
-2. Log out
-	0. Exit
-> 2
-#You have successfully logged out!
 1. Create an account
 2. Log into account
 	0. Exit
@@ -56,23 +17,6 @@
 1. Create an account
 2. Log into account
 	0. Exit
-> 1
-Your card number:
-4000004240278614
-Your card PIN:
-6418
-1. Create an account
-2. Log into account
-	0. Exit
-> 2
-Enter your card number:
-> 4000004240278614
-Enter your PIN:
-> 5305
-Wrong card number or PIN!
-1. Create an account
-2. Log into account
-	0. Exit
 > 0
 Bye!
 [1;31m
@@ -80,48 +24,179 @@
 1. Create an account
 2. Log into account
 	0. Exit
-> 1
-Your card number:
-4000007715933733
-Your card PIN:
-7720
-1. Create an account
-2. Log into account
-	0. Exit
-> 2
-Enter your card number:
-> 400000735986342
-Enter your PIN:
-> 7720
-Wrong card number or PIN!
-1. Create an account
-2. Log into account
-	0. Exit
+> 0
+Bye!
 [1;31m
 Start test 5[0m
 1. Create an account
 2. Log into account
 	0. Exit
 > 1
+Your card has been created
 Your card number:
-4000000685292479
+4000003229489998
 Your card PIN:
-8240
+7134
+AINSERT INTO card (number, pin) VALUES (4000003229489998, 7134);
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000002928136413
+Your card PIN:
+9473
+AINSERT INTO card (number, pin) VALUES (4000002928136413, 9473);
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000002065723312
+Your card PIN:
+7158
+AINSERT INTO card (number, pin) VALUES (4000002065723312, 7158);
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000007573431977
+Your card PIN:
+5747
+AINSERT INTO card (number, pin) VALUES (4000007573431977, 5747);
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000001801131855
+Your card PIN:
+8072
+AINSERT INTO card (number, pin) VALUES (4000001801131855, 8072);
+1. Create an account
+2. Log into account
+	0. Exit
+> 0
+Bye!
+4000003229489998
+4000002928136413
+4000002065723312
+4000007573431977
+4000001801131855
+[1;31m
+Start test 6[0m
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000001501188593
+Your card PIN:
+9376
+AINSERT INTO card (number, pin) VALUES (4000001501188593, 9376);
 1. Create an account
 2. Log into account
 	0. Exit
 > 2
 Enter your card number:
-> 4000000685292479
+> 4000001501188593
 Enter your PIN:
-> 8240
+> 9376
 "You have successfully logged in!
-
 1. Balance
 2. Log out
 	0. Exit
+> 0
+Bye!
+[1;31m
+Start test 7[0m
+1. Create an account
+2. Log into account
+	0. Exit
 > 1
-Balance: 0
+Your card has been created
+Your card number:
+4000002957891086
+Your card PIN:
+8943
+Xjava.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+1. Create an account
+2. Log into account
+	0. Exit
+> 2
+Enter your card number:
+> 4000002957891086
+Enter your PIN:
+> 8296
+Wrong card number or PIN!
+1. Create an account
+2. Log into account
+	0. Exit
+> 0
+Bye!
+[1;31m
+Start test 8[0m
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000001160483087
+Your card PIN:
+1278
+Xjava.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+1. Create an account
+2. Log into account
+	0. Exit
+> 2
+Enter your card number:
+> 400000151722961
+Enter your PIN:
+> 1278
+Wrong card number or PIN!
+1. Create an account
+2. Log into account
+	0. Exit
+> 0
+Bye!
+[1;31m
+Start test 9[0m
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000007119481692
+Your card PIN:
+3474
+Xjava.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
+1. Create an account
+2. Log into account
+	0. Exit
+> 2
+Enter your card number:
+> 4000007119481692
+Enter your PIN:
+> 3474
+Wrong card number or PIN!
+1. Create an account
+2. Log into account
+	0. Exit
+> 1
+Your card has been created
+Your card number:
+4000007093713748
+Your card PIN:
+6925
+Xjava.sql.SQLException: [SQLITE_BUSY]  The database file is locked (database is locked)
 1. Create an account
 2. Log into account
 	0. Exit

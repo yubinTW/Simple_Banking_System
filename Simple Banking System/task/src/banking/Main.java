@@ -1,60 +1,57 @@
 package banking;
 
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
+
+        String filename = args[1];
+
+        Bank bank = new Bank(filename);
         Scanner scanner = new Scanner(System.in);
-
-        String cardNumber = "";
-        String pin = "";
-
+        String x;
         while (true) {
             System.out.println("1. Create an account\n" +
                     "2. Log into account\n" +
                     "0. Exit");
-            String input = scanner.next();
-            if (input.equals("0")) {
-                System.out.println("Bye!");
-                break;
+            x = scanner.next();
+            if (x.equals("1")) {
+                bank.createAccount();
             }
-            if (input.equals("1")) {
-                Random random = new Random();
-                cardNumber = String.format("400000%05d%05d", random.nextInt(100000), random.nextInt(100000));
-                pin = String.format("%04d", random.nextInt(10000));
-
-                System.out.println("Your card number:\n" +
-                        cardNumber +
-                        "\n" +
-                        "Your card PIN:\n" +
-                        pin);
-            }
-            if (input.equals("2")) {
+            if (x.equals("2")) {
                 System.out.println("Enter your card number:");
-                String s1 = scanner.next();
+                String cardNumber = scanner.next();
                 System.out.println("Enter your PIN:");
-                String s2 = scanner.next();
-
-                if (cardNumber.equals(s1) && pin.equals(s2)) {
+                String pin = scanner.next();
+                if (bank.loginAccount(cardNumber, pin)) {
                     System.out.println("You have successfully logged in!");
-                    System.out.println("\n" +
-                            "1. Balance\n" +
-                            "2. Log out\n" +
-                            "0. Exit");
-                    String x = scanner.next();
-                    if (x.equals("1")) {
-                        System.out.println("Balance: 0");
-                    }
-                    if (x.equals("2")) {
-                        System.out.println("You have successfully logged out!");
+                    while (true) {
+                        System.out.println("1. Balance\n" +
+                                "2. Log out\n" +
+                                "0. Exit");
+                        x = scanner.next();
+                        if (x.equals("1")) {
+                            System.out.println("Balance: 0");
+                        }
+                        if (x.equals("2")) {
+                            System.out.println("You have successfully logged out!");
+                            break;
+                        }
+                        if (x.equals("0")) {
+                            break;
+                        }
                     }
                 } else {
                     System.out.println("Wrong card number or PIN!");
                 }
             }
-
+            if (x.equals("0")) {
+                System.out.println("Bye!");
+                break;
+            }
         }
 
     }
+
 }
